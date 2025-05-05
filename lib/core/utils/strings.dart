@@ -1,0 +1,31 @@
+class Strings {
+  static const String account = "Account";
+  static const String password = "Password";
+  static const String forgotPassword = "Forgot Password";
+  static const String or = "Or";
+  static const String loginWithGoogle = "Login with Google";
+  static const String doNotHaveAnAccount = "Don't have an account";
+  static const String youHaveAnAccount = "You have an account";
+  static const String signup = "Sign Up";
+  static const String signin = "Sign In";
+  static const String firstname = "first name";
+  static const String lastname = "last name";
+  static const String role = "role";
+  static const String gender = "gender";
+  static const String game = "game";
+  static const String games = "games";
+  static const String playNow = "play now";
+  static const String levels = "Levels";
+  static const String level = "Level";
+  static const String settings = "settings";
+  static const String reports = "reports";
+  static const String report = "report";
+  static const String appointments = "appointments";
+  static const String appointment = "appointment";
+  static const String chats = "chats";
+  static const String logout = "logout";
+  static const String profile = "profile";
+  static const String patients = "Patients";
+  static const String invites = "Invites";
+  static const String educationalvideos = "Educational Videos";
+}
