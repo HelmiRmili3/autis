@@ -23,6 +23,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../src/common/view/login_screen.dart';
 import '../../src/patient/persentation/views/game_level_screen.dart';
+import '../../src/patient/persentation/views/patient_vedios_screen.dart';
 import 'route_names.dart';
 
 class AppRouter {
@@ -236,6 +237,16 @@ class AppRouter {
               DoctorVideosScreen(
                 patientId: patientId,
               ),
+            );
+          },
+        ),
+        GoRoute(
+          name: RoutesNames.patientvediosscreen,
+          path: RoutesNames.patientvediosscreen,
+          pageBuilder: (context, state) {
+            return _fadeTransition(
+              state,
+              const PatientVideosScreen(),
             );
           },
         ),

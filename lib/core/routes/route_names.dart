@@ -24,6 +24,7 @@ class RoutesNames {
   static const String doctorVediosScreen = '/doctorvediosscreen';
 
   // Patients routes
+  static const String patientvediosscreen = '/patientvediosscreen';
 
   // Admin routes
 }
