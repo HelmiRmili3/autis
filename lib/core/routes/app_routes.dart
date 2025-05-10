@@ -1,11 +1,16 @@
 import 'package:autis/core/utils/enums/role_enum.dart';
+import 'package:autis/src/admin/persentation/views/admin_profile_screen.dart';
 import 'package:autis/src/app.dart';
+import 'package:autis/src/common/entitys/user_entity.dart';
 import 'package:autis/src/common/view/register_screen.dart';
 import 'package:autis/src/common/view/splash_screen.dart';
 import 'package:autis/src/doctor/persentation/views/doctor_appointment_screen.dart';
 import 'package:autis/src/doctor/persentation/views/doctor_chat_screen.dart';
 import 'package:autis/src/doctor/persentation/views/doctor_game_details.dart';
 import 'package:autis/src/doctor/persentation/views/doctor_game_screen.dart';
+import 'package:autis/src/doctor/persentation/views/doctor_home_screen.dart';
+import 'package:autis/src/doctor/persentation/views/doctor_not_authorized_screen.dart';
+import 'package:autis/src/doctor/persentation/views/doctor_profile_edit_screen.dart';
 import 'package:autis/src/doctor/persentation/views/doctor_profile_screen.dart';
 import 'package:autis/src/doctor/persentation/views/doctor_report_screen.dart';
 import 'package:autis/src/doctor/persentation/views/doctor_vedios_screen.dart';
@@ -15,6 +20,8 @@ import 'package:autis/src/patient/domain/entities/patient_entity.dart';
 import 'package:autis/src/patient/persentation/views/appointments_screen.dart';
 import 'package:autis/src/patient/persentation/views/conversation_screen.dart';
 import 'package:autis/src/patient/persentation/views/level_questions_screen.dart';
+import 'package:autis/src/patient/persentation/views/patient_profile_edit_screen.dart';
+import 'package:autis/src/patient/persentation/views/patient_profile_screen.dart';
 import 'package:autis/src/patient/persentation/views/profile_screen.dart';
 import 'package:autis/src/patient/persentation/views/reports_screen.dart';
 import 'package:autis/src/patient/persentation/views/setting_screen.dart';
@@ -124,10 +131,16 @@ class AppRouter {
         GoRoute(
           name: RoutesNames.appointements,
           path: RoutesNames.appointements,
-          pageBuilder: (context, state) => _fadeTransition(
-            state,
-            const AppointmentsScreen(),
-          ),
+          pageBuilder: (context, state) {
+            final user = state.extra as UserEntity;
+
+            return _fadeTransition(
+              state,
+              AppointmentsScreen(
+                user: user,
+              ),
+            );
+          },
         ),
         // Conversation Screen
         GoRoute(
@@ -247,6 +260,77 @@ class AppRouter {
             return _fadeTransition(
               state,
               const PatientVideosScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          name: RoutesNames.doctorEditProfile,
+          path: RoutesNames.doctorEditProfile,
+          pageBuilder: (context, state) {
+            final user = state.extra as UserEntity;
+
+            return _fadeTransition(
+              state,
+              DoctorEditProfileScreen(
+                user: user,
+              ),
+            );
+          },
+        ),
+        GoRoute(
+          name: RoutesNames.doctorNotAuthorizedScreen,
+          path: RoutesNames.doctorNotAuthorizedScreen,
+          pageBuilder: (context, state) {
+            // final user = state.extra as UserEntity;
+
+            return _fadeTransition(
+              state,
+              const DoctorNotAuthorizedScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          name: RoutesNames.doctorHomeScreen,
+          path: RoutesNames.doctorHomeScreen,
+          pageBuilder: (context, state) {
+            // final user = state.extra as UserEntity;
+
+            return _fadeTransition(
+              state,
+              const DoctorHomeScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          name: RoutesNames.patientProfileScreen,
+          path: RoutesNames.patientProfileScreen,
+          pageBuilder: (context, state) {
+            return _fadeTransition(
+              state,
+              const PatientProfileScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          name: RoutesNames.pateintEditProfileScreen,
+          path: RoutesNames.pateintEditProfileScreen,
+          pageBuilder: (context, state) {
+            final user = state.extra as UserEntity;
+            return _fadeTransition(
+              state,
+              PatientProfileEditScreen(
+                user: user,
+              ),
+            );
+          },
+        ),
+        GoRoute(
+          name: RoutesNames.adminProfile,
+          path: RoutesNames.adminProfile,
+          pageBuilder: (context, state) {
+            return _fadeTransition(
+              state,
+              const AdminProfileScreen(),
             );
           },
         ),

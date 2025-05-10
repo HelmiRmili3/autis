@@ -26,40 +26,6 @@ class DoctorVideosScreen extends StatefulWidget {
 }
 
 class _DoctorVideosScreenState extends State<DoctorVideosScreen> {
-  // // Sample video data - replace with your actual data source
-  // final List<Map<String, dynamic>> videos = [
-  //   {
-  //     'id': '1',
-  //     'title': 'Introduction to Autism',
-  //     'thumbnail': 'https://i.ytimg.com/vi/6WY4Qj9Wf8E/maxresdefault.jpg',
-  //     'videoUrl':
-  //         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-  //     'duration': '12:34',
-  //     'views': '1.2K views',
-  //     'uploadDate': '2 days ago',
-  //   },
-  //   {
-  //     'id': '2',
-  //     'title': 'Communication Strategies',
-  //     'thumbnail': 'https://i.ytimg.com/vi/9J5Zv5W7X2A/maxresdefault.jpg',
-  //     'videoUrl':
-  //         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-  //     'duration': '8:45',
-  //     'views': '856 views',
-  //     'uploadDate': '1 week ago',
-  //   },
-  //   {
-  //     'id': '3',
-  //     'title': 'Behavioral Therapy Techniques',
-  //     'thumbnail': 'https://i.ytimg.com/vi/3fKp5X5Jf3I/maxresdefault.jpg',
-  //     'videoUrl':
-  //         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-  //     'duration': '15:22',
-  //     'views': '2.3K views',
-  //     'uploadDate': '3 weeks ago',
-  //   },
-  // ];
-
   // Video player controllers
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
@@ -262,7 +228,10 @@ class _DoctorVideosScreenState extends State<DoctorVideosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: Strings.educationalvideos),
+      appBar: const CustomAppBar(
+        title: Strings.educationalvideos,
+        active: false,
+      ),
       body: BlocBuilder<PatientBloc, PatientState>(
         builder: (context, state) {
           if (state is PatientLoading) {
@@ -392,37 +361,47 @@ class _DoctorVideosScreenState extends State<DoctorVideosScreen> {
                           ),
 
                         // Video info
-                        Padding(
-                          padding: EdgeInsets.all(12.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                video.title,
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 8.h),
-                              Row(
+                        Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(12.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(width: 16.w),
-                                  Icon(Iconsax.calendar, size: 16.sp),
-                                  SizedBox(width: 4.w),
                                   Text(
-                                    video.uploadDate,
+                                    video.title,
                                     style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Colors.grey[600],
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
                                     ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 16.w),
+                                      Icon(Iconsax.calendar, size: 16.sp),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        video.uploadDate,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                sl<PatientBloc>().add(DeleteVedio(video.id));
+                              },
+                              child: const Text("Delete"),
+                            ),
+                          ],
                         ),
                       ],
                     ),

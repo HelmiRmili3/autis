@@ -10,6 +10,7 @@ class UserEntity {
   final String? location;
   final String avatarUrl;
   final Gender gender;
+  final DateTime dateOfBirth;
   final Role role;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -19,11 +20,12 @@ class UserEntity {
     required this.email,
     required this.firstname,
     required this.lastname,
-    this.phone,
-    this.location,
     required this.avatarUrl,
     required this.gender,
+    required this.dateOfBirth,
     required this.role,
+    this.phone,
+    this.location,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -38,6 +40,7 @@ class UserEntity {
       'location': location,
       'avatarUrl': avatarUrl,
       'gender': gender.toString().split('.').last,
+      'dateOfBirth': dateOfBirth.toIso8601String(),
       'role': role.toString().split('.').last,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
@@ -54,6 +57,7 @@ class UserEntity {
       location: map['location'],
       avatarUrl: map['avatarUrl'] ?? '',
       gender: GenderExtension.fromDisplayName(map['gender']),
+      dateOfBirth: DateTime.parse(map['dateOfBirth']),
       role: Role.fromJson(map['role']),
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),

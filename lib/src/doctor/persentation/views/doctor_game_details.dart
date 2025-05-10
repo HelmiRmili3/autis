@@ -17,7 +17,10 @@ class _DoctorGameDetailsState extends State<DoctorGameDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: widget.game.name),
+      appBar: CustomAppBar(
+        title: widget.game.name,
+        active: false,
+      ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SingleChildScrollView(

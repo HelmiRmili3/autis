@@ -14,6 +14,7 @@ class DoctorEntity extends UserEntity {
     required super.firstname,
     required super.lastname,
     required super.avatarUrl,
+    required super.dateOfBirth,
     required super.gender,
     required super.phone,
     required super.createdAt,
@@ -31,14 +32,17 @@ class DoctorEntity extends UserEntity {
       lastname: json['lastname'] as String,
       avatarUrl: json['avatarUrl'] as String,
       gender: GenderExtension.fromDisplayName(json['gender']),
+      dateOfBirth: DateTime.parse(json['dateOfBirth'] as String),
       phone: json['phone'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       licenseNumber: json['licenseNumber'] as String,
       isVerified: json['isVerified'] as bool? ?? false,
-      specialization: json['specialization'] as String?,
+      specialization: json['specialization'] as String,
     );
   }
+
+  // 2013-05-09T22:16:21.081544
 
   Map<String, dynamic> toJson() {
     return {
@@ -49,6 +53,7 @@ class DoctorEntity extends UserEntity {
       'avatarUrl': avatarUrl,
       'gender': gender.name,
       'phone': phone,
+      'dateOfBirth': dateOfBirth.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'role': role.name, // Just returns "doctor" without enum prefix

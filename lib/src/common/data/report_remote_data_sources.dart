@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../core/errors/failures.dart';
 import '../../../core/params/report/create_report_params.dart';
+import '../../../core/params/report/update_report_params.dart';
 import '../../../core/services/secure_storage_service.dart';
 import '../../../core/types/either.dart';
 import '../../../injection_container.dart';
@@ -12,13 +13,15 @@ import '../entitys/report_entity.dart';
 
 abstract class ReportRemoteDataSource {
   Future<Either<Failure, List<ReportEntity>>> createReport(
-      CreateReportParams report);
+    CreateReportParams report,
+  );
   Future<Either<Failure, List<ReportEntity>>> getReports();
   Future<Either<Failure, List<ReportEntity>>> getReportsByDoctor(
-      String patientId);
+    String patientId,
+  );
   Future<Either<Failure, List<ReportEntity>>> getReportsByPatient();
   Future<Either<Failure, ReportEntity>> fetchReportById(String reportId);
-  Future<Either<Failure, List<ReportEntity>>> update(CreateReportParams report);
+  Future<Either<Failure, List<ReportEntity>>> update(UpdateReportParams report);
   Future<Either<Failure, List<ReportEntity>>> delete(String id);
 }
 
@@ -71,9 +74,31 @@ class ReportRemoteDataSourceImpl implements ReportRemoteDataSource {
 
   @override
   Future<Either<Failure, List<ReportEntity>>> update(
-      CreateReportParams report) async {
+    UpdateReportParams report,
+  ) async {
+    final user = await sl<UserProfileStorage>().getUserProfile();
+    if (user == null) {
+      return const Left(
+        FirestoreFailure('Failed to create report no user found'),
+      );
+    }
     try {
-      throw UnimplementedError();
+      await firebaseFirestore
+          .collection(Collection.reports)
+          .doc(report.reportId)
+          .update({
+        'reportDetails': report.reportDetails,
+        'attachmentUrl': report.attachmentUrl
+      });
+      final data = await firebaseFirestore
+          .collection(Collection.reports)
+          .where('doctorId', isEqualTo: user.uid)
+          .where('patientId', isEqualTo: report.patientId)
+          .get();
+      final reports = data.docs.map((doc) {
+        return ReportEntity.fromJson(doc.data());
+      }).toList();
+      return Right(reports);
     } catch (e) {
       throw Exception('Failed to update report: $e');
     }
@@ -82,7 +107,22 @@ class ReportRemoteDataSourceImpl implements ReportRemoteDataSource {
   @override
   Future<Either<Failure, List<ReportEntity>>> delete(String id) async {
     try {
-      throw UnimplementedError();
+      final user = await sl<UserProfileStorage>().getUserProfile();
+      if (user == null) {
+        return const Left(
+          FirestoreFailure('Failed to create report no user found'),
+        );
+      }
+
+      await firebaseFirestore.collection(Collection.reports).doc(id).delete();
+      final data = await firebaseFirestore
+          .collection(Collection.reports)
+          .where('doctorId', isEqualTo: user.uid)
+          .get();
+      final reports = data.docs.map((doc) {
+        return ReportEntity.fromJson(doc.data());
+      }).toList();
+      return Right(reports);
     } catch (e) {
       throw Exception('Failed to delete report: $e');
     }

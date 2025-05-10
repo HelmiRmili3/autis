@@ -19,6 +19,10 @@ class DeletedAppointement extends AppointmentEvent {
   DeletedAppointement(this.appointementId);
 }
 
-class GetDoctorAppointements extends AppointmentEvent {}
+class GetDoctorAppointements extends AppointmentEvent {
+  final String patientId;
+
+  GetDoctorAppointements(this.patientId);
+}
 
 class GetPatientAppointements extends AppointmentEvent {}

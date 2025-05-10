@@ -8,6 +8,7 @@ class UpdateAppointmentParams {
   final DoctorEntity doctor;
   final PatientEntity patient;
   final DateTime appointmentDate;
+  final String status;
   final String? location;
 
   UpdateAppointmentParams({
@@ -17,6 +18,7 @@ class UpdateAppointmentParams {
     required this.doctor,
     required this.patient,
     required this.appointmentDate,
+    required this.status,
     this.location,
   });
 
@@ -29,6 +31,7 @@ class UpdateAppointmentParams {
       'patient': patient.toJson(),
       'appointmentDate': appointmentDate.toIso8601String(),
       if (location != null) 'location': location,
+      'status': status
     };
   }
 
@@ -41,6 +44,7 @@ class UpdateAppointmentParams {
         'doctor: ${doctor.toString()}, '
         'patient: ${patient.toString()}, '
         'appointmentDate: $appointmentDate, '
+        'status: $status, '
         'location: $location)';
   }
 }

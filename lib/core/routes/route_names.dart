@@ -13,6 +13,7 @@ class RoutesNames {
   static const String appointements = '/appointements';
   static const String conversation = '/conversation';
   static const String questions = '/questions';
+  static const String adminProfile = '/adminProfile';
 
   // Doctor routes
   static const String doctorProfile = '/doctorProfile';
@@ -22,9 +23,13 @@ class RoutesNames {
   static const String doctorAppointments = '/doctorAppointmens';
   static const String doctorGameDetails = '/doctorgamedetails';
   static const String doctorVediosScreen = '/doctorvediosscreen';
+  static const String doctorEditProfile = '/doctorEditProfile';
+  static const String doctorNotAuthorizedScreen = '/doctorNotAuthorizedScreen';
+  static const String doctorHomeScreen = '/doctorHomeScreen';
 
   // Patients routes
   static const String patientvediosscreen = '/patientvediosscreen';
-
+  static const String patientProfileScreen = '/patientProfileScreen';
+  static const String pateintEditProfileScreen = '/patientProfileEditScreen';
   // Admin routes
 }

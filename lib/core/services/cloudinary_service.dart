@@ -13,6 +13,43 @@ class CloudinaryRestService {
   final String _uploadPreset = dotenv.get('CLOUDINARY_UPLOAD_PRESET');
 
   // CLOUDINARY_UPLOAD_PRESET=autis_storage
+  Future<Map<String, dynamic>> uploadImage(File imageFile) async {
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    const folder = 'autis'; // Change to your desired folder name
+
+    final params = {
+      'folder': folder,
+      'timestamp': timestamp,
+      'upload_preset': _uploadPreset,
+    };
+
+    final signature = _generateSignature(params);
+
+    final url = Uri.parse(
+      'https://api.cloudinary.com/v1_1/$_cloudName/image/upload',
+    );
+
+    final request = http.MultipartRequest('POST', url)
+      ..fields.addAll({
+        ...params,
+        'signature': signature,
+        'api_key': _apiKey,
+      })
+      ..files.add(await http.MultipartFile.fromPath(
+        'file',
+        imageFile.path,
+      ));
+
+    final response = await request.send();
+    final responseData = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      return jsonDecode(responseData);
+    } else {
+      throw Exception(
+          'Image upload failed: ${response.statusCode} - $responseData');
+    }
+  }
 
   Future<Map<String, dynamic>> uploadVideo(File videoFile) async {
     final timestamp = DateTime.now().millisecondsSinceEpoch.toString();

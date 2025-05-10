@@ -28,4 +28,10 @@ class Strings {
   static const String patients = "Patients";
   static const String invites = "Invites";
   static const String educationalvideos = "Educational Videos";
+  static const String register = "Register";
+  static const String noreportsfound = "No Reports Found";
+  static const String newappointment = "New Appointment";
+  static const String create = "CREATE";
+  static const String editProfile = "Edit Profile";
+  static const String welcome = "Welcome";
 }

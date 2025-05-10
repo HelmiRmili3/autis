@@ -2,6 +2,7 @@ import 'package:autis/core/errors/failures.dart';
 import 'package:autis/core/params/report/create_report_params.dart';
 import 'package:autis/core/types/either.dart';
 
+import '../../../core/params/report/update_report_params.dart';
 import '../entitys/report_entity.dart';
 
 abstract class ReportRepository {
@@ -12,6 +13,7 @@ abstract class ReportRepository {
   Future<Either<Failure, List<ReportEntity>>> createReport(
       CreateReportParams report);
   Future<Either<Failure, List<ReportEntity>>> deleteReport(String reportId);
-  Future<Either<Failure, void>> updateReport(CreateReportParams updatedReport);
+  Future<Either<Failure, List<ReportEntity>>> updateReport(
+      UpdateReportParams updatedReport);
   Future<Either<Failure, ReportEntity>> fetchReportById(String reportId);
 }

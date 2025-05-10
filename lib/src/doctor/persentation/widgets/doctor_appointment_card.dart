@@ -3,21 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-import '../entitys/appointement_entity.dart';
+import '../../../common/entitys/appointement_entity.dart';
 
-class AppointmentCard extends StatelessWidget {
+class DoctorAppointmentCard extends StatelessWidget {
   final AppointmentEntity appointment;
-  final VoidCallback onCancel;
-  final VoidCallback onReschedule;
+  final VoidCallback onReject;
+  final VoidCallback onAccept;
+  // final VoidCallback onReschedule;
   final Color primaryColor = const Color(0xFF0076BE);
   final Color accentColor = const Color(0xFF00F1F8);
   final Color pastAppointmentColor = Colors.grey[300]!;
 
-  AppointmentCard({
+  DoctorAppointmentCard({
     super.key,
     required this.appointment,
-    required this.onCancel,
-    required this.onReschedule,
+    required this.onReject,
+    required this.onAccept,
+    // required this.onReschedule,
   });
 
   @override
@@ -47,7 +49,7 @@ class AppointmentCard extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(10.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -76,9 +78,9 @@ class AppointmentCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 25.r,
                   backgroundImage: NetworkImage(doctor.avatarUrl),
-                  backgroundColor: isUpcoming
+                  backgroundColor: status == 'accepted'
                       ? primaryColor.withOpacity(0.2)
-                      : Colors.grey.withOpacity(0.4),
+                      : Colors.white.withOpacity(0.4),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
@@ -169,28 +171,37 @@ class AppointmentCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: onCancel,
+                    onTap: onReject,
                     child: _buildActionButton(
-                      text: 'Cancel',
+                      text: 'Reject',
                       icon: Icons.cancel,
                       color: Colors.red,
-                      onPressed: onCancel,
+                      onPressed: onReject,
                     ),
                   ),
                 ),
-                // Expanded(
-                //   child: GestureDetector(
-                //     onTap: onReschedule,
-                //     child: _buildActionButton(
-                //       text: 'Reschedule',
-                //       icon: Icons.schedule,
-                //       color: primaryColor,
-                //       onPressed: onReschedule,
-                //     ),
-                //   ),
-                // )
+                Expanded(
+                  child: GestureDetector(
+                    onTap: onAccept,
+                    child: _buildActionButton(
+                      text: 'Accepet',
+                      icon: Icons.done,
+                      color: primaryColor,
+                      onPressed: onAccept,
+                    ),
+                  ),
+                )
               ],
             ),
+            // GestureDetector(
+            //   onTap: onReschedule,
+            //   child: _buildActionButton(
+            //     text: 'Reschedule',
+            //     icon: Icons.schedule,
+            //     color: Colors.grey,
+            //     onPressed: onReschedule,
+            //   ),
+            // ),
           ],
         ),
       ),

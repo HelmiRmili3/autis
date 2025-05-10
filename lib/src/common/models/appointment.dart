@@ -11,6 +11,7 @@ class AppointmentModel extends Equatable {
   final DoctorEntity doctor;
   final PatientEntity patient;
   final DateTime appointmentDate;
+  final String status;
   final String? location;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -22,6 +23,7 @@ class AppointmentModel extends Equatable {
     required this.doctor,
     required this.patient,
     required this.appointmentDate,
+    required this.status,
     this.location,
     required this.createdAt,
     required this.updatedAt,
@@ -35,6 +37,7 @@ class AppointmentModel extends Equatable {
       doctor: DoctorEntity.fromJson(json['doctor'] as Map<String, dynamic>),
       patient: PatientEntity.fromJson(json['patient'] as Map<String, dynamic>),
       appointmentDate: DateTime.parse(json['appointmentDate'] as String),
+      status: json['status'] as String,
       location: json['location'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -50,6 +53,7 @@ class AppointmentModel extends Equatable {
       patient: entity.patient,
       appointmentDate: entity.appointmentDate,
       location: entity.location,
+      status: entity.status,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     );
@@ -64,6 +68,7 @@ class AppointmentModel extends Equatable {
       'patient': patient.toJson(),
       'appointmentDate': appointmentDate.toIso8601String(),
       'location': location,
+      'status': status,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -78,6 +83,7 @@ class AppointmentModel extends Equatable {
       patient: patient,
       appointmentDate: appointmentDate,
       location: location,
+      status: status,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
@@ -90,6 +96,7 @@ class AppointmentModel extends Equatable {
     DoctorEntity? doctor,
     PatientEntity? patient,
     DateTime? appointmentDate,
+    String? status,
     String? location,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -101,6 +108,7 @@ class AppointmentModel extends Equatable {
       doctor: doctor ?? this.doctor,
       patient: patient ?? this.patient,
       appointmentDate: appointmentDate ?? this.appointmentDate,
+      status: status ?? this.status,
       location: location ?? this.location,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

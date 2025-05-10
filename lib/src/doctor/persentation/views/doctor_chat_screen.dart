@@ -57,6 +57,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
                 firstname: user.firstname,
                 lastname: user.lastname,
                 avatarUrl: user.avatarUrl,
+                dateOfBirth: user.dateOfBirth,
                 gender: user.gender,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
@@ -78,7 +79,10 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
-      appBar: const CustomAppBar(title: "Chats"),
+      appBar: const CustomAppBar(
+        title: "Chats",
+        active: false,
+      ),
       body: HomeBg(
         child: isLoadingUser
             ? const Center(child: CircularProgressIndicator())

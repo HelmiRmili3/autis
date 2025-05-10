@@ -3,19 +3,17 @@ import '../../../../core/utils/enums/role_enum.dart';
 import '../../../common/entitys/user_entity.dart';
 
 class PatientEntity extends UserEntity {
-  final DateTime? dateOfBirth;
-
   const PatientEntity({
     required super.uid,
     required super.email,
     required super.firstname,
     required super.lastname,
     required super.avatarUrl,
+    required super.dateOfBirth,
     required super.gender,
     required super.phone,
     required super.createdAt,
     required super.updatedAt,
-    this.dateOfBirth,
   }) : super(role: Role.patient);
 
   factory PatientEntity.fromJson(Map<String, dynamic> json) {
@@ -51,11 +49,10 @@ class PatientEntity extends UserEntity {
   }
 
   int? get age {
-    if (dateOfBirth == null) return null;
     final now = DateTime.now();
-    int age = now.year - dateOfBirth!.year;
-    if (now.month < dateOfBirth!.month ||
-        (now.month == dateOfBirth!.month && now.day < dateOfBirth!.day)) {
+    int age = now.year - dateOfBirth.year;
+    if (now.month < dateOfBirth.month ||
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
       age--;
     }
     return age;

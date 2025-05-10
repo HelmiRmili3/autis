@@ -1,94 +1,70 @@
-import 'package:autis/core/utils/strings.dart';
-import 'package:autis/injection_container.dart';
-import 'package:autis/src/common/blocs/invite_bloc/invite_bloc.dart';
-import 'package:autis/src/common/blocs/invite_bloc/invite_state.dart';
+import 'package:autis/src/common/blocs/appointement_bloc/appointement_state.dart';
+import 'package:autis/src/common/entitys/user_entity.dart';
+import 'package:autis/src/patient/domain/entities/patient_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/services/navigation_service.dart';
-import '../../../../core/services/secure_storage_service.dart';
+import '../../../../core/utils/strings.dart';
+import '../../../../injection_container.dart';
 import '../../../common/blocs/appointement_bloc/appointement_bloc.dart';
 import '../../../common/blocs/appointement_bloc/appointement_event.dart';
-import '../../../common/blocs/appointement_bloc/appointement_state.dart';
+import '../../../common/blocs/invite_bloc/invite_bloc.dart';
 import '../../../common/blocs/invite_bloc/invite_event.dart';
+import '../../../common/blocs/invite_bloc/invite_state.dart';
 import '../../../common/view/container_screen.dart';
 import '../../../common/widgets/appointment_card.dart';
-import '../../domain/entities/patient_entity.dart';
 import '../widgets/popup_form.dart';
 
 class AppointmentsScreen extends StatefulWidget {
-  const AppointmentsScreen({super.key});
+  final UserEntity user;
+  const AppointmentsScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<AppointmentsScreen> createState() => _AppointmentsScreenState();
 }
 
 class _AppointmentsScreenState extends State<AppointmentsScreen> {
-  late PatientEntity? currentPatient;
-
   @override
   void initState() {
+    sl<AppointmentBloc>().add(GetPatientAppointements());
     super.initState();
-    _loadPatientFromStorage();
-  }
-
-  Future<void> _loadPatientFromStorage() async {
-    final user = await sl<UserProfileStorage>().getUserProfile();
-
-    if (user != null) {
-      setState(() {
-        currentPatient = PatientEntity(
-          uid: user.uid,
-          email: user.email,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          avatarUrl: user.avatarUrl,
-          gender: user.gender,
-          phone: user.phone ?? '',
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        );
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppointmentBloc, AppointmentState>(
-      bloc: sl<AppointmentBloc>()..add(GetPatientAppointements()),
-      builder: (context, state) {
-        if (state is AppointmentFailure) {
-          return Center(child: Text(state.error));
-        }
-        if (state is AppointmentLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (state is AppointmentLoaded) {
-          return ContainerScreen(
-            title: Strings.appointments,
-            imagePath: 'assets/images/homebg.png',
-            leadingicon: Icons.arrow_back_ios_new_rounded,
-            onLeadingPress: () => sl<NavigationService>().goBack(),
-            floatingActionButton: ElevatedButton.icon(
-              onPressed: () {
-                _showCreateAppointmentPopup(context);
-              },
-              icon: const Icon(Icons.add),
-              label: const Text("Add"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            children: [
-              Expanded(
+    final currentPatient = PatientEntity.fromJson(widget.user.toMap());
+    return ContainerScreen(
+      title: Strings.appointments,
+      imagePath: 'assets/images/homebg.png',
+      leadingicon: Icons.arrow_back_ios_new_rounded,
+      onLeadingPress: () => sl<NavigationService>().goBack(),
+      floatingActionButton: _buildFloatingActionButton(context, currentPatient),
+      children: [
+        BlocBuilder<AppointmentBloc, AppointmentState>(
+          builder: (context, state) {
+            if (state is AppointmentFailure) {
+              // debugPrint("==============> ${state.toString()}");
+
+              return Center(child: Text(state.error));
+            }
+            if (state is AppointmentLoading) {
+              // debugPrint("==============> ${state.toString()}");
+
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is AppointmentLoaded) {
+              // debugPrint("==============> ${state.toString()}");
+
+              return SizedBox(
+                height: 650.h,
                 child: ListView.builder(
                   shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: state.appointments.length,
                   itemBuilder: (context, index) {
                     return Padding(
@@ -107,76 +83,85 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                     );
                   },
                 ),
-              ),
-              // Padding(
-              //   padding: EdgeInsets.only(bottom: 20.h),
-              //   child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       foregroundColor: Colors.white,
-              //       backgroundColor: const Color(0xFF0076BE),
-              //       padding: EdgeInsets.symmetric(vertical: 15.h),
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(30.r),
-              //       ),
-              //     ),
-              //     onPressed: () {
-              //       _showCreateAppointmentPopup(context);
-              //     },
-              //     child: Text(
-              //       'CREATE APPOINTMENT',
-              //       style: TextStyle(
-              //         fontSize: 16.sp,
-              //         fontWeight: FontWeight.bold,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-            ],
-          );
-        }
-        return const SizedBox.shrink();
-      },
+              );
+            }
+            // debugPrint("==============> ${state.toString()}");
+
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
+      ],
     );
   }
 
-  void _showCreateAppointmentPopup(BuildContext context) {
+  Widget _buildFloatingActionButton(
+      BuildContext context, PatientEntity currentPatient) {
+    return ElevatedButton.icon(
+      onPressed: () => _showCreateAppointmentPopup(context, currentPatient),
+      icon: const Icon(Icons.add),
+      label: const Text("Demande"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  void _showCreateAppointmentPopup(BuildContext context, currentPatient) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
       barrierLabel: "Create Appointment",
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (_, __, ___) {
+        sl<InviteBloc>().add(CheckInviteStatus(patientId: currentPatient!.uid));
+
         return BlocBuilder<InviteBloc, InviteState>(
-          bloc: sl<InviteBloc>()
-            ..add(CheckInviteStatus(patientId: currentPatient!.uid)),
           builder: (context, state) {
             if (state is InviteAccepted) {
               return AppointmentForm(
                 patient: currentPatient!,
                 initialDoctor: state.invite.doctor,
                 onCancel: () => Navigator.pop(context),
+                onSubmit: () {
+                  sl<AppointmentBloc>().add(GetPatientAppointements());
+                  Navigator.pop(context);
+                },
               );
             }
-            if (state is InviteRejected) {
-              return const Center(
-                child: Text(
-                    "You can not add appointment you have to be accepted by a doctor"),
+            if (state is InviteRejected || state is InvitePending) {
+              return AlertDialog(
+                title: const Text("Invitation Required"),
+                content: const Text(
+                    "You need to be accepted by a doctor before creating appointments"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("OK"),
+                  ),
+                ],
               );
             }
-            if (state is InvitePending) {
-              return const Center(
-                child: Text(
-                    "You can not add appointment you have to be accepted by a doctor"),
-              );
-            }
-
             if (state is InviteLoading) {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is InviteFailure) {
-              return Center(child: Text(state.error));
+              return AlertDialog(
+                title: const Text("No  Invitation Sent"),
+                content: const Text(
+                    "You need to to send Invitation  a doctor before creating appointments"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
             }
-            return const SizedBox.shrink();
+            return const Center(child: CircularProgressIndicator());
           },
         );
       },

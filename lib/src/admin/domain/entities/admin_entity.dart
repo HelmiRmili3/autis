@@ -9,6 +9,8 @@ class AdminEntity extends UserEntity {
     required super.lastname,
     required super.avatarUrl,
     required super.gender,
+    required super.phone,
+    required super.dateOfBirth,
     required super.createdAt,
     required super.updatedAt,
   }) : super(role: Role.admin);

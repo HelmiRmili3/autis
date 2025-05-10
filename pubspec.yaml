@@ -82,10 +82,13 @@ flutter:
   assets:
     - assets/images/splash_image.png
     - assets/images/homebg.jpg
+    - assets/images/image1.jpeg
+    - assets/images/image2.jpeg
     - assets/images/n0.png
     - assets/images/n1.png
     - assets/images/n2.png
     - assets/images/n3.png
+
     - .env
 
   # fonts:

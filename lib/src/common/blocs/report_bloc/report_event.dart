@@ -1,5 +1,7 @@
 import 'package:autis/core/params/report/create_report_params.dart';
 
+import '../../../../core/params/report/update_report_params.dart';
+
 abstract class ReportEvent {}
 
 class CreateReport extends ReportEvent {
@@ -8,7 +10,7 @@ class CreateReport extends ReportEvent {
 }
 
 class UpdateReport extends ReportEvent {
-  final CreateReportParams report;
+  final UpdateReportParams report;
   UpdateReport(this.report);
 }
 

@@ -1,6 +1,7 @@
 import 'package:autis/src/doctor/domain/entities/doctor_entity.dart';
 import 'package:autis/src/patient/domain/entities/patient_entity.dart';
 import 'package:uuid/uuid.dart';
+import '../../../core/utils/enums/appointement_enum.dart';
 import '../entitys/appointement_entity.dart';
 
 class AppointmentFactory {
@@ -11,6 +12,7 @@ class AppointmentFactory {
   final PatientEntity patient;
   final DateTime appointmentDate;
   final String? location;
+  final String status;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -22,6 +24,7 @@ class AppointmentFactory {
     required this.doctor,
     required this.patient,
     required this.appointmentDate,
+    required this.status,
     this.location,
     required this.createdAt,
     required this.updatedAt,
@@ -45,6 +48,7 @@ class AppointmentFactory {
       patient: patient,
       appointmentDate: appointmentDate,
       location: location,
+      status: AppointementStatus.pending.name,
       createdAt: now, // Set creation time
       updatedAt: now, // Set initial update time
     );
@@ -59,6 +63,7 @@ class AppointmentFactory {
       doctor: DoctorEntity.fromJson(json['doctor'] as Map<String, dynamic>),
       patient: PatientEntity.fromJson(json['patient'] as Map<String, dynamic>),
       appointmentDate: DateTime.parse(json['appointmentDate'] as String),
+      status: json['status'] as String,
       location: json['location'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -74,6 +79,7 @@ class AppointmentFactory {
       doctor: entity.doctor,
       patient: entity.patient,
       appointmentDate: entity.appointmentDate,
+      status: entity.status,
       location: entity.location,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
@@ -87,6 +93,7 @@ class AppointmentFactory {
     String? patientId,
     DoctorEntity? doctor,
     PatientEntity? patient,
+    String? status,
     DateTime? appointmentDate,
     String? location,
   }) {
@@ -97,6 +104,7 @@ class AppointmentFactory {
       doctor: doctor ?? this.doctor,
       patient: patient ?? this.patient,
       appointmentDate: appointmentDate ?? this.appointmentDate,
+      status: status ?? this.status,
       location: location ?? this.location,
       createdAt: createdAt, // Preserve original creation time
       updatedAt: DateTime.now(), // Update timestamp on modification
@@ -112,6 +120,7 @@ class AppointmentFactory {
       'patient': patient.toJson(),
       'appointmentDate': appointmentDate.toIso8601String(),
       'location': location,
+      'status': status,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -125,6 +134,7 @@ class AppointmentFactory {
       doctor: doctor,
       patient: patient,
       appointmentDate: appointmentDate,
+      status: status,
       location: location,
       createdAt: createdAt,
       updatedAt: updatedAt,

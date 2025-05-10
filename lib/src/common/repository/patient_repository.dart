@@ -6,6 +6,8 @@ import '../../patient/domain/entities/patient_entity.dart';
 import '../entitys/video.dart';
 
 abstract class PatientRepository {
+  Future<Either<Failure, PatientEntity>> getPatient();
+
   Future<Either<Failure, List<PatientEntity>>> getPatients();
   Future<Either<Failure, List<PatientEntity>>> getPatientsByDoctor(
       String doctorId);

@@ -2,7 +2,9 @@ import 'package:autis/core/routes/route_names.dart';
 import 'package:autis/core/services/navigation_service.dart';
 import 'package:autis/core/utils/extentions.dart';
 import 'package:autis/src/common/blocs/doctor_bloc/doctor_bloc.dart';
-import 'package:autis/src/common/blocs/doctor_bloc/doctor_state.dart';
+import 'package:autis/src/common/blocs/patient_bloc/patient_bloc.dart';
+import 'package:autis/src/common/blocs/patient_bloc/patient_event.dart';
+import 'package:autis/src/common/blocs/patient_bloc/patient_state.dart';
 import 'package:autis/src/common/containers/home_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,17 +17,23 @@ import '../../../common/blocs/auth_bloc/auth_event.dart';
 import '../../../common/blocs/auth_bloc/auth_state.dart';
 import '../../../common/blocs/doctor_bloc/doctor_event.dart';
 import '../../../common/entitys/user_entity.dart';
-import '../widgets/costom_appbar.dart';
-import '../widgets/detail_row.dart';
+import '../../../doctor/persentation/widgets/costom_appbar.dart';
+import '../../../doctor/persentation/widgets/detail_row.dart';
 
-class DoctorProfileScreen extends StatefulWidget {
-  const DoctorProfileScreen({super.key});
+class PatientProfileScreen extends StatefulWidget {
+  const PatientProfileScreen({super.key});
 
   @override
-  State<DoctorProfileScreen> createState() => _DoctorProfileScreenState();
+  State<PatientProfileScreen> createState() => _PatientProfileScreenState();
 }
 
-class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
+class _PatientProfileScreenState extends State<PatientProfileScreen> {
+  @override
+  void initState() {
+    sl<PatientBloc>().add(GetPatient());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
@@ -64,19 +72,19 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         active: false,
       ),
       body: HomeBg(
-        child: BlocBuilder<DoctorBloc, DoctorState>(
+        child: BlocBuilder<PatientBloc, PatientState>(
           builder: (context, state) {
-            if (state is DoctorLoading) {
+            if (state is PatientLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-            if (state is DoctorError) {
+            if (state is PatientFailure) {
               return Center(
                 child: Text(state.error),
               );
             }
-            if (state is DoctorLoaded) {
+            if (state is PatientLoaded) {
               return Padding(
                 padding:
                     EdgeInsets.symmetric(vertical: 120.h, horizontal: 16.w),
@@ -94,7 +102,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                         flex: 4,
                         child: CircleAvatar(
                           radius: 80.0,
-                          backgroundImage: NetworkImage(state.doctor.avatarUrl),
+                          backgroundImage:
+                              NetworkImage(state.patient.avatarUrl),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -104,19 +113,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${state.doctor.firstname} ${state.doctor.lastname}',
+                              '${state.patient.firstname} ${state.patient.lastname}',
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              state.doctor.specialization!,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white.withOpacity(0.8),
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -130,19 +131,19 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                 children: [
                                   DetailRow(
                                     icon: Icons.email,
-                                    text: state.doctor.email,
+                                    text: state.patient.email,
                                   ),
                                   const SizedBox(height: 8),
                                   if (user.phone != null)
                                     DetailRow(
                                       icon: Icons.phone,
-                                      text: state.doctor.phone!,
+                                      text: state.patient.phone!,
                                     ),
                                   const SizedBox(height: 8),
                                   if (user.location != null)
                                     DetailRow(
                                       icon: Icons.location_on,
-                                      text: state.doctor.location!,
+                                      text: state.patient.location!,
                                     ),
                                 ],
                               ),
@@ -159,7 +160,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             child: ElevatedButton(
                               onPressed: () {
                                 sl<NavigationService>().pushNamed(
-                                  RoutesNames.doctorEditProfile,
+                                  RoutesNames.pateintEditProfileScreen,
                                   extra: user,
                                 );
                               },

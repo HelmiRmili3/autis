@@ -146,7 +146,7 @@ class DependencyInjection {
           sl(),
           sl(),
         ));
-    sl.registerFactory<AppointmentBloc>(
+    sl.registerLazySingleton<AppointmentBloc>(
       () => AppointmentBloc(
         sl(),
       ),

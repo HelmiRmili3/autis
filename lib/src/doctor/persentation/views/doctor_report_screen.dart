@@ -1,5 +1,6 @@
 import 'package:autis/injection_container.dart';
 import 'package:autis/src/common/containers/home_background.dart';
+import 'package:autis/src/common/entitys/report_entity.dart';
 import 'package:autis/src/doctor/domain/entities/doctor_entity.dart';
 import 'package:autis/src/patient/domain/entities/patient_entity.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/params/report/create_report_params.dart';
+import '../../../../core/params/report/update_report_params.dart';
 import '../../../../core/services/secure_storage_service.dart';
 import '../../../../core/utils/strings.dart';
 import '../../../common/blocs/report_bloc/report_bloc.dart';
@@ -46,6 +48,7 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
           firstname: user.firstname,
           lastname: user.lastname,
           avatarUrl: user.avatarUrl,
+          dateOfBirth: user.dateOfBirth,
           gender: user.gender,
           phone: user.phone ?? '',
           createdAt: user.createdAt,
@@ -61,7 +64,10 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
-      appBar: const CustomAppBar(title: Strings.reports),
+      appBar: const CustomAppBar(
+        title: Strings.reports,
+        active: false,
+      ),
       floatingActionButton: _showPopUpForm(),
       body: HomeBg(
         child: BlocBuilder<ReportBloc, ReportState>(
@@ -84,7 +90,7 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
                       ),
                       SizedBox(height: 16.h),
                       Text(
-                        "No Reports Found",
+                        Strings.noreportsfound,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24.sp,
@@ -117,8 +123,10 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
                   itemBuilder: (context, index) {
                     return ReportCard(
                       report: state.reports[index],
-                      onShare: () {},
-                      onViewDetails: () {},
+                      onEdit: () => _showEditReportDialog(
+                        context,
+                        state.reports[index],
+                      ),
                     );
                   },
                 ),
@@ -139,7 +147,6 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
       ),
     );
   }
-  // Add this to your _DoctorReportScreenState class
 
   FloatingActionButton _showPopUpForm() {
     return FloatingActionButton(
@@ -178,14 +185,14 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: attachmentUrlController,
-                    decoration: const InputDecoration(
-                      labelText: 'Attachment URL (optional)',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+                  // const SizedBox(height: 16),
+                  // TextFormField(
+                  //   controller: attachmentUrlController,
+                  //   decoration: const InputDecoration(
+                  //     labelText: 'Attachment URL (optional)',
+                  //     border: OutlineInputBorder(),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -198,7 +205,6 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
             ElevatedButton(
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  // // Dispatch event to create report
                   sl<ReportBloc>().add(CreateReport(
                     CreateReportParams(
                       widget.patient.uid,
@@ -215,6 +221,80 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
                 }
               },
               child: const Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditReportDialog(BuildContext context, ReportEntity report) {
+    final formKey = GlobalKey<FormState>();
+    final reportDetailsController =
+        TextEditingController(text: report.reportDetails);
+    final attachmentUrlController = TextEditingController(
+      text: report.attachmentUrl ?? '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Report'),
+          content: Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  TextFormField(
+                    controller: reportDetailsController,
+                    decoration: const InputDecoration(
+                      labelText: 'Report Details',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 5,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter report details';
+                      }
+                      return null;
+                    },
+                  ),
+                  // const SizedBox(height: 16),
+                  // TextFormField(
+                  //   controller: attachmentUrlController,
+                  //   decoration: const InputDecoration(
+                  //     labelText: 'Attachment URL (optional)',
+                  //     border: OutlineInputBorder(),
+                  //   ),
+                  // ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  sl<ReportBloc>().add(UpdateReport(
+                    UpdateReportParams(
+                      report.reportId,
+                      report.patientId,
+                      reportDetailsController.text,
+                      attachmentUrlController.text.isNotEmpty
+                          ? attachmentUrlController.text
+                          : null,
+                    ),
+                  ));
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Update'),
             ),
           ],
         );

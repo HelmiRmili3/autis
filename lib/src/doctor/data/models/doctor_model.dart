@@ -7,6 +7,7 @@ class DoctorModel extends UserModel {
   final String licenseNumber;
   final String? specialization;
   final List<String>? availableDays;
+  final DateTime? dateOfBirth;
 
   DoctorModel({
     required super.uid,
@@ -14,6 +15,7 @@ class DoctorModel extends UserModel {
     required super.firstname,
     required super.lastname,
     required super.avatarUrl,
+    this.dateOfBirth,
     required super.gender,
     required super.phone,
     required super.createdAt,
@@ -32,6 +34,7 @@ class DoctorModel extends UserModel {
       firstname: entity.firstname,
       lastname: entity.lastname,
       avatarUrl: entity.avatarUrl,
+      dateOfBirth: entity.dateOfBirth,
       gender: entity.gender.name,
       phone: entity.phone,
       createdAt: entity.createdAt.toIso8601String(),
@@ -47,11 +50,12 @@ class DoctorModel extends UserModel {
       firstname: firstname,
       lastname: lastname,
       avatarUrl: avatarUrl,
+      dateOfBirth: dateOfBirth!,
       gender: Gender.values.firstWhere(
         (e) => e.name == gender,
         orElse: () => Gender.preferNotToSay,
       ),
-      phone: phone,
+      phone: phone!,
       createdAt: DateTime.parse(createdAt),
       updatedAt: DateTime.parse(updatedAt),
       licenseNumber: licenseNumber,

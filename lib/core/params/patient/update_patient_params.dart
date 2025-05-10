@@ -1,6 +1,5 @@
 class UpdatePatientParams {
   final String uid;
-  final String email;
   final String firstname;
   final String lastname;
   final String? phone;
@@ -9,7 +8,6 @@ class UpdatePatientParams {
 
   UpdatePatientParams({
     required this.uid,
-    required this.email,
     required this.firstname,
     required this.lastname,
     this.phone,
@@ -21,7 +19,6 @@ class UpdatePatientParams {
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
-      'email': email,
       'firstname': firstname,
       'lastname': lastname,
       if (phone != null) 'phone': phone, // Only include if not null
@@ -35,7 +32,6 @@ class UpdatePatientParams {
   factory UpdatePatientParams.fromJson(Map<String, dynamic> json) {
     return UpdatePatientParams(
       uid: json['uid'] as String,
-      email: json['email'] as String,
       firstname: json['firstname'] as String,
       lastname: json['lastname'] as String,
       phone: json['phone'] as String?,
@@ -56,7 +52,6 @@ class UpdatePatientParams {
   }) {
     return UpdatePatientParams(
       uid: uid ?? this.uid,
-      email: email ?? this.email,
       firstname: firstname ?? this.firstname,
       lastname: lastname ?? this.lastname,
       phone: phone ?? this.phone,
@@ -69,7 +64,6 @@ class UpdatePatientParams {
   String toString() {
     return 'UpdatePatientParams('
         'uid: $uid, '
-        'email: $email, '
         'firstname: $firstname, '
         'lastname: $lastname, '
         'phone: $phone, '

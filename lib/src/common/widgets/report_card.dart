@@ -7,6 +7,7 @@ class ReportCard extends StatelessWidget {
   final ReportEntity report;
   final VoidCallback? onViewDetails;
   final VoidCallback? onShare;
+  final VoidCallback? onEdit;
 
   final Color primaryColor = const Color(0xFF0076BE);
   final Color accentColor = const Color(0xFF00F1F8);
@@ -16,6 +17,7 @@ class ReportCard extends StatelessWidget {
     required this.report,
     this.onViewDetails,
     this.onShare,
+    this.onEdit,
   });
 
   @override
@@ -73,21 +75,52 @@ class ReportCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: primaryColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Text(
-                    'Report',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, color: Colors.grey),
+                  onSelected: (value) {
+                    if (value == 'edit' && onEdit != null) {
+                      onEdit!();
+                    } else if (value == 'share' && onShare != null) {
+                      onShare!();
+                    } else if (value == 'view' && onViewDetails != null) {
+                      onViewDetails!();
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => [
+                    if (onEdit != null)
+                      PopupMenuItem<String>(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit, size: 20.w),
+                            SizedBox(width: 8.w),
+                            Text('Edit'),
+                          ],
+                        ),
+                      ),
+                    if (onViewDetails != null)
+                      PopupMenuItem<String>(
+                        value: 'view',
+                        child: Row(
+                          children: [
+                            Icon(Icons.visibility, size: 20.w),
+                            SizedBox(width: 8.w),
+                            Text('View Details'),
+                          ],
+                        ),
+                      ),
+                    if (onShare != null)
+                      PopupMenuItem<String>(
+                        value: 'share',
+                        child: Row(
+                          children: [
+                            Icon(Icons.share, size: 20.w),
+                            SizedBox(width: 8.w),
+                            Text('Share'),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
@@ -100,7 +133,7 @@ class ReportCard extends StatelessWidget {
 
             SizedBox(height: 16.h),
 
-            // Report Summary (Placeholder - customize with your actual report data)
+            // Report Summary
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
@@ -129,45 +162,9 @@ class ReportCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 8.h),
-                  // Row(
-                  //   children: [
-                  //     Icon(Icons.assessment, size: 16.w, color: primaryColor),
-                  //     SizedBox(width: 4.w),
-                  //     Text(
-                  //       'Progress: Moderate',
-                  //       style: TextStyle(
-                  //         fontSize: 14.sp,
-                  //         color: Colors.black87,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                 ],
               ),
             ),
-            SizedBox(height: 16.h),
-
-            // Action Buttons
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: _buildActionButton(
-            //         text: 'View Full Report',
-            //         icon: Icons.description,
-            //         onPressed: onViewDetails,
-            //       ),
-            //     ),
-            //     SizedBox(width: 10.w),
-            //     Expanded(
-            //       child: _buildActionButton(
-            //         text: 'Share',
-            //         icon: Icons.share,
-            //         onPressed: onShare,
-            //       ),
-            //     ),
-            //   ],
-            // ),
           ],
         ),
       ),

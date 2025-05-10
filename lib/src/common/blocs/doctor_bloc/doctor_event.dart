@@ -1,4 +1,4 @@
-import 'package:autis/src/doctor/domain/entities/doctor_entity.dart';
+import '../../../doctor/domain/entities/update_doctor_params.dart';
 
 abstract class DoctorEvent {}
 
@@ -14,8 +14,8 @@ class FetchDoctor extends DoctorEvent {
 }
 
 class UpdateDoctor extends DoctorEvent {
-  final DoctorEntity doctorEntity;
-  UpdateDoctor({required this.doctorEntity});
+  final UpdateDoctorParams doctor;
+  UpdateDoctor({required this.doctor});
 }
 
 class VerifyDoctor extends DoctorEvent {

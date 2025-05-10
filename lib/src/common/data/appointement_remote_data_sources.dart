@@ -13,12 +13,15 @@ import '../../../injection_container.dart';
 import '../entitys/appointement_entity.dart';
 
 abstract class AppointmentRemoteDataSource {
-  Future<Either<Failure, void>> createAppointment(
-      CreateAppointmentParams appointment);
+  Future<Either<Failure, List<AppointmentEntity>>> createAppointment(
+    CreateAppointmentParams appointment,
+  );
   Future<Either<Failure, List<AppointmentEntity>>> getAppointmentsByPatient();
-  Future<Either<Failure, List<AppointmentEntity>>> getAppointmentsByDoctor();
-  Future<Either<Failure, void>> update(UpdateAppointmentParams appointment);
-  Future<Either<Failure, void>> delete(String appointmentId);
+  Future<Either<Failure, List<AppointmentEntity>>> getAppointmentsByDoctor(
+      String patientId);
+  Future<Either<Failure, List<AppointmentEntity>>> update(
+      UpdateAppointmentParams appointment);
+  Future<Either<Failure, List<AppointmentEntity>>> delete(String appointmentId);
 }
 
 class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
@@ -59,7 +62,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, void>> update(
+  Future<Either<Failure, List<AppointmentEntity>>> update(
       UpdateAppointmentParams appointment) async {
     try {
       // Update Appointment
@@ -67,8 +70,26 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
           .collection(Collection.appointments)
           .doc(appointment.appointmentId)
           .update(appointment.toJson());
-      // RETURN THE null
-      return const Right(null);
+      // FETCH THE DATA FROM FIREBASE FIRESTORE
+      final user = await sl<UserProfileStorage>().getUserProfile();
+      if (user != null) {
+        final data = await firebaseFirestore
+            .collection(Collection.appointments)
+            .where('patientId', isEqualTo: appointment.patientId)
+            .where('doctorId', isEqualTo: appointment.doctorId)
+            .get();
+        // MAP THE DOCS TO APPOINTMENT ENTITY LIST
+        final appointments = data.docs.map((doc) {
+          return AppointmentEntity.fromJson(doc.data());
+        }).toList();
+        debugPrint("appointmens ${appointments.toList()}");
+        // RETURN THE APPOINTMENS
+        return Right(appointments);
+      }
+      return Left(
+        FirestoreFailure(
+            'Failed to create appointment  by patient with id ${appointment.patient.uid}'),
+      );
     } catch (e) {
       return Left(
         FirestoreFailure(
@@ -78,13 +99,30 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, void>> delete(String id) async {
+  Future<Either<Failure, List<AppointmentEntity>>> delete(String id) async {
     try {
       await firebaseFirestore
           .collection(Collection.appointments)
           .doc(id)
           .delete();
-      return const Right(null);
+      // FETCH THE DATA FROM FIREBASE FIRESTORE
+      final user = await sl<UserProfileStorage>().getUserProfile();
+      if (user != null) {
+        final data = await firebaseFirestore
+            .collection(Collection.appointments)
+            .where('patientId', isEqualTo: user.uid)
+            .get();
+        // MAP THE DOCS TO APPOINTMENT ENTITY LIST
+        final appointments = data.docs.map((doc) {
+          return AppointmentEntity.fromJson(doc.data());
+        }).toList();
+        debugPrint("appointmens ${appointments.toList()}");
+        // RETURN THE APPOINTMENS
+        return Right(appointments);
+      }
+      return const Left(
+        FirestoreFailure('Failed to create appointment  '),
+      );
     } catch (e) {
       return Left(
         FirestoreFailure(
@@ -94,8 +132,8 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, List<AppointmentEntity>>>
-      getAppointmentsByDoctor() async {
+  Future<Either<Failure, List<AppointmentEntity>>> getAppointmentsByDoctor(
+      String patientId) async {
     try {
       final user = await sl<UserProfileStorage>().getUserProfile();
       // FETCH THE DATA FROM FIREBASE FIRESTORE
@@ -103,6 +141,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         final data = await firebaseFirestore
             .collection(Collection.appointments)
             .where('doctorId', isEqualTo: user.uid)
+            .where('patientId', isEqualTo: patientId)
             .get();
         // MAP THE DOCS TO APPOINTMENT ENTITY LIST
         final appointments = data.docs.map((doc) {
@@ -123,7 +162,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, void>> createAppointment(
+  Future<Either<Failure, List<AppointmentEntity>>> createAppointment(
       CreateAppointmentParams appointment) async {
     try {
       // FETCH THE DATA FROM FIREBASE FIRESTORE
@@ -142,7 +181,25 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
             appointmentData.toJson(),
           );
       // RETURN THE null
-      return const Right(null);
+      // FETCH THE DATA FROM FIREBASE FIRESTORE
+      final user = await sl<UserProfileStorage>().getUserProfile();
+      if (user != null) {
+        final data = await firebaseFirestore
+            .collection(Collection.appointments)
+            .where('patientId', isEqualTo: user.uid)
+            .get();
+        // MAP THE DOCS TO APPOINTMENT ENTITY LIST
+        final appointments = data.docs.map((doc) {
+          return AppointmentEntity.fromJson(doc.data());
+        }).toList();
+        debugPrint("appointmens ${appointments.toList()}");
+        // RETURN THE APPOINTMENS
+        return Right(appointments);
+      }
+      return Left(
+        FirestoreFailure(
+            'Failed to create appointment  by patient with id ${appointment.patient.uid}'),
+      );
     } catch (e) {
       return Left(
         FirestoreFailure(

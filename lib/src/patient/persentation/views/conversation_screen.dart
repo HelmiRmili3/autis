@@ -42,6 +42,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               firstname: user.firstname,
               lastname: user.lastname,
               avatarUrl: user.avatarUrl,
+              dateOfBirth: user.dateOfBirth,
               gender: user.gender,
               createdAt: user.createdAt,
               updatedAt: user.updatedAt,

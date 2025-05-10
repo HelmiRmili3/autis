@@ -3,9 +3,9 @@ import 'package:autis/src/common/blocs/appointement_bloc/appointement_state.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/params/appointment/create_appointment_params.dart';
+import '../../../../core/utils/strings.dart';
 import '../../../../injection_container.dart';
 import '../../../doctor/domain/entities/doctor_entity.dart';
 import '../../domain/entities/patient_entity.dart';
@@ -18,24 +18,24 @@ class AppointmentForm extends StatefulWidget {
   final String submitButtonText;
   final GlobalKey<FormState>? formKey;
   final DoctorEntity? initialDoctor;
-  final DateTime? initialDate;
-  final TimeOfDay? initialTime;
+  // final DateTime? initialDate;
+  // final TimeOfDay? initialTime;
   final String? initialLocation;
   final VoidCallback? onCancel;
-  // final VoidCallback? onSubmit;
+  final VoidCallback? onSubmit;
 
   const AppointmentForm({
     super.key,
     required this.patient,
-    this.formTitle = 'New Appointment',
-    this.submitButtonText = 'CREATE',
+    this.formTitle = Strings.newappointment,
+    this.submitButtonText = Strings.create,
     this.formKey,
     this.initialDoctor,
-    this.initialDate,
-    this.initialTime,
+    // this.initialDate,
+    // this.initialTime,
     this.initialLocation,
     this.onCancel,
-    // this.onSubmit,
+    this.onSubmit,
   });
 
   @override
@@ -48,8 +48,8 @@ class _AppointmentFormState extends State<AppointmentForm> {
   late final TextEditingController _dateController;
   late final TextEditingController _timeController;
   late DoctorEntity? _selectedDoctor;
-  late DateTime? _selectedDate;
-  late TimeOfDay? _selectedTime;
+  // late DateTime? _selectedDate;
+  // late TimeOfDay? _selectedTime;
   late String _selectedLocation;
 
   @override
@@ -61,16 +61,16 @@ class _AppointmentFormState extends State<AppointmentForm> {
     _doctorController =
         TextEditingController(text: widget.initialDoctor!.email);
     _selectedDoctor = widget.initialDoctor;
-    _selectedDate = widget.initialDate;
-    _selectedTime = widget.initialTime;
+    // _selectedDate = widget.initialDate;
+    // _selectedTime = widget.initialTime;
     _selectedLocation = widget.initialLocation ?? '';
 
-    if (_selectedDate != null) {
-      _dateController.text = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-    }
-    if (_selectedTime != null) {
-      _timeController.text = _selectedTime!.format(context);
-    }
+    // if (_selectedDate != null) {
+    //   _dateController.text = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+    // }
+    // if (_selectedTime != null) {
+    //   _timeController.text = _selectedTime!.format(context);
+    // }
   }
 
   @override
@@ -115,7 +115,7 @@ class _AppointmentFormState extends State<AppointmentForm> {
                           TextFormField(
                             controller: _doctorController,
                             decoration: InputDecoration(
-                              labelText: 'Date',
+                              labelText: 'Email',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.r),
                               ),
@@ -125,63 +125,63 @@ class _AppointmentFormState extends State<AppointmentForm> {
                             readOnly: true,
                           ),
                           SizedBox(height: 15.h),
-                          TextFormField(
-                            controller: _dateController,
-                            decoration: InputDecoration(
-                              labelText: 'Date',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.r),
-                              ),
-                              prefixIcon:
-                                  Icon(Icons.calendar_today, size: 20.sp),
-                            ),
-                            readOnly: true,
-                            onTap: () async {
-                              final date = await showDatePicker(
-                                context: context,
-                                initialDate: _selectedDate ?? DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime.now()
-                                    .add(const Duration(days: 365)),
-                              );
-                              if (date != null) {
-                                setState(() {
-                                  _selectedDate = date;
-                                  _dateController.text =
-                                      DateFormat('yyyy-MM-dd').format(date);
-                                });
-                              }
-                            },
-                            validator: (value) =>
-                                value!.isEmpty ? 'Please select a date' : null,
-                          ),
-                          SizedBox(height: 15.h),
-                          TextFormField(
-                            controller: _timeController,
-                            decoration: InputDecoration(
-                              labelText: 'Time',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.r),
-                              ),
-                              prefixIcon: Icon(Icons.access_time, size: 20.sp),
-                            ),
-                            readOnly: true,
-                            onTap: () async {
-                              final time = await showTimePicker(
-                                context: context,
-                                initialTime: _selectedTime ?? TimeOfDay.now(),
-                              );
-                              if (time != null) {
-                                setState(() {
-                                  _selectedTime = time;
-                                  _timeController.text = time.format(context);
-                                });
-                              }
-                            },
-                            validator: (value) =>
-                                value!.isEmpty ? 'Please select a time' : null,
-                          ),
-                          SizedBox(height: 15.h),
+                          // TextFormField(
+                          //   controller: _dateController,
+                          //   decoration: InputDecoration(
+                          //     labelText: 'Date',
+                          //     border: OutlineInputBorder(
+                          //       borderRadius: BorderRadius.circular(10.r),
+                          //     ),
+                          //     prefixIcon:
+                          //         Icon(Icons.calendar_today, size: 20.sp),
+                          //   ),
+                          //   readOnly: true,
+                          //   onTap: () async {
+                          //     final date = await showDatePicker(
+                          //       context: context,
+                          //       initialDate: _selectedDate ?? DateTime.now(),
+                          //       firstDate: DateTime.now(),
+                          //       lastDate: DateTime.now()
+                          //           .add(const Duration(days: 365)),
+                          //     );
+                          //     if (date != null) {
+                          //       setState(() {
+                          //         _selectedDate = date;
+                          //         _dateController.text =
+                          //             DateFormat('yyyy-MM-dd').format(date);
+                          //       });
+                          //     }
+                          //   },
+                          //   validator: (value) =>
+                          //       value!.isEmpty ? 'Please select a date' : null,
+                          // ),
+                          // SizedBox(height: 15.h),
+                          // TextFormField(
+                          //   controller: _timeController,
+                          //   decoration: InputDecoration(
+                          //     labelText: 'Time',
+                          //     border: OutlineInputBorder(
+                          //       borderRadius: BorderRadius.circular(10.r),
+                          //     ),
+                          //     prefixIcon: Icon(Icons.access_time, size: 20.sp),
+                          //   ),
+                          //   readOnly: true,
+                          //   onTap: () async {
+                          //     final time = await showTimePicker(
+                          //       context: context,
+                          //       initialTime: _selectedTime ?? TimeOfDay.now(),
+                          //     );
+                          //     if (time != null) {
+                          //       setState(() {
+                          //         _selectedTime = time;
+                          //         _timeController.text = time.format(context);
+                          //       });
+                          //     }
+                          //   },
+                          //   validator: (value) =>
+                          //       value!.isEmpty ? 'Please select a time' : null,
+                          // ),
+                          // SizedBox(height: 15.h),
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: 'Location',
@@ -293,13 +293,14 @@ class _AppointmentFormState extends State<AppointmentForm> {
         patientId: widget.patient.uid,
         doctor: _selectedDoctor!,
         patient: widget.patient,
-        appointmentDate: DateTime(
-          _selectedDate!.year,
-          _selectedDate!.month,
-          _selectedDate!.day,
-          _selectedTime!.hour,
-          _selectedTime!.minute,
-        ),
+        appointmentDate: DateTime.now().add(const Duration(days: 1)),
+        // appointmentDate: DateTime(
+        //   _selectedDate!.year,
+        //   _selectedDate!.month,
+        //   _selectedDate!.day,
+        //   _selectedTime!.hour,
+        //   _selectedTime!.minute,
+        // ),
         location: _selectedLocation,
       );
       sl<AppointmentBloc>().add(CreatedAppointement(appointment));

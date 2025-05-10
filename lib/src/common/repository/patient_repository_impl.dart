@@ -47,4 +47,9 @@ class PatientRepositoryImpl implements PatientRepository {
   Future<Either<Failure, List<Video>>> getVediosByPatient(String id) async {
     return remoteDataSource.getVediosByPatient(id);
   }
+
+  @override
+  Future<Either<Failure, PatientEntity>> getPatient() {
+    return remoteDataSource.getPatient();
+  }
 }

@@ -90,9 +90,10 @@ class AuthRemoteDataSourcesImpl implements AuthRemoteDataSource {
           avatarUrl:
               "https://img.freepik.com/free-psd/3d-illustration-with-online-avatar_23-2151303097.jpg?ga=GA1.1.1885085166.1740484951&semt=ais_hybrid&w=740",
           gender: user.gender,
+          dateOfBirth: user.dateOfBirth!,
           phone: user.phone,
           licenseNumber: "licenseNumber",
-          specialization: "specialization",
+          specialization: user.specialization,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
@@ -112,6 +113,7 @@ class AuthRemoteDataSourcesImpl implements AuthRemoteDataSource {
         avatarUrl:
             "https://img.freepik.com/free-psd/3d-illustration-with-online-avatar_23-2151303097.jpg?ga=GA1.1.1885085166.1740484951&semt=ais_hybrid&w=740",
         role: user.role,
+        dateOfBirth: user.dateOfBirth!,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

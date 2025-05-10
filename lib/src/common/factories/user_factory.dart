@@ -1,4 +1,3 @@
-// factories/user_factory.dart
 import 'package:autis/src/admin/domain/entities/admin_entity.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/utils/enums/gender_enum.dart';
@@ -7,7 +6,6 @@ import '../../patient/domain/entities/patient_entity.dart';
 
 class UserFactory {
   static const _uuid = Uuid();
-  // Create users functions
   static PatientEntity createPatient({
     required String email,
     required String firstname,
@@ -15,7 +13,7 @@ class UserFactory {
     required String avatarUrl,
     required Gender gender,
     required String malady,
-    DateTime? dateOfBirth,
+    required DateTime dateOfBirth,
     String? phone,
   }) {
     final now = DateTime.now();
@@ -38,6 +36,7 @@ class UserFactory {
     required String firstname,
     required String lastname,
     required String avatarUrl,
+    required String dateOfBirth,
     required Gender gender,
     required String phone,
     required String licenseNumber,
@@ -50,6 +49,7 @@ class UserFactory {
       firstname: firstname,
       lastname: lastname,
       avatarUrl: avatarUrl,
+      dateOfBirth: DateTime.parse(dateOfBirth),
       gender: gender,
       phone: phone,
       licenseNumber: licenseNumber,
@@ -64,6 +64,8 @@ class UserFactory {
     required String firstname,
     required String lastname,
     required String avatarUrl,
+    required String dateOfBirth,
+    required String phone,
     required Gender gender,
     required List<String> systemPermissions,
     String? adminLevel,
@@ -75,6 +77,8 @@ class UserFactory {
       firstname: firstname,
       lastname: lastname,
       avatarUrl: avatarUrl,
+      dateOfBirth: DateTime.parse(dateOfBirth),
+      phone: phone,
       gender: gender,
       createdAt: now,
       updatedAt: now,
@@ -115,6 +119,7 @@ class UserFactory {
     String? lastname,
     String? avatarUrl,
     Gender? gender,
+    DateTime? dateOfBirth,
     String? phone,
     String? licenseNumber,
     String? specialization,
@@ -125,6 +130,7 @@ class UserFactory {
       firstname: firstname ?? original.firstname,
       lastname: lastname ?? original.lastname,
       avatarUrl: avatarUrl ?? original.avatarUrl,
+      dateOfBirth: dateOfBirth ?? original.dateOfBirth,
       gender: gender ?? original.gender,
       phone: phone ?? original.phone,
       createdAt: original.createdAt,
@@ -139,8 +145,10 @@ class UserFactory {
     String? email,
     String? firstname,
     String? lastname,
+    DateTime? dateOfBirth,
     String? avatarUrl,
     Gender? gender,
+    String? phone,
     List<String>? systemPermissions,
     String? adminLevel,
   }) {
@@ -149,7 +157,9 @@ class UserFactory {
       email: email ?? original.email,
       firstname: firstname ?? original.firstname,
       lastname: lastname ?? original.lastname,
+      dateOfBirth: dateOfBirth ?? original.dateOfBirth,
       avatarUrl: avatarUrl ?? original.avatarUrl,
+      phone: phone ?? original.phone,
       gender: gender ?? original.gender,
       createdAt: original.createdAt,
       updatedAt: DateTime.now(),

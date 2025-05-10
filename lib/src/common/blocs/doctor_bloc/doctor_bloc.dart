@@ -51,7 +51,7 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
       UpdateDoctor event, Emitter<DoctorState> emit) async {
     emit(DoctorLoading());
     try {
-      final response = await doctorRepository.updateDoctor(event.doctorEntity);
+      final response = await doctorRepository.updateDoctor(event.doctor);
       response.fold(
         (failure) => emit(DoctorError("Error updating doctor: $failure")),
         (success) => emit(DoctorUpdated("Doctor updated successfully")),

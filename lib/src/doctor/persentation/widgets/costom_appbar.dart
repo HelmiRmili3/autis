@@ -13,10 +13,12 @@ import '../../../common/blocs/auth_bloc/auth_bloc.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String? avatarUrl;
+  final bool active;
   const CustomAppBar({
     super.key,
     required this.title,
     this.avatarUrl,
+    required this.active,
   });
 
   @override
@@ -70,10 +72,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     builder: (context, state) {
                       if (state is Authenticated) {
                         return GestureDetector(
-                          onTap: () {
-                            sl<NavigationService>()
-                                .pushNamed(RoutesNames.doctorProfile);
-                          },
+                          onTap: active
+                              ? () {
+                                  sl<NavigationService>()
+                                      .pushNamed(RoutesNames.doctorProfile);
+                                }
+                              : null,
                           child: CircleAvatar(
                             radius: 20,
                             backgroundImage: NetworkImage(state.user.avatarUrl),

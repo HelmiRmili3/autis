@@ -40,8 +40,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
         (failure) {
           emit(ReportFailure(failure.message));
         },
-        (_) {
-          // emit(ReportsLoaded([])); // Update with actual data if needed
+        (reports) {
+          emit(ReportsLoaded(reports: reports));
         },
       );
     } catch (e) {

@@ -5,14 +5,15 @@ import '../../../core/types/either.dart';
 import '../entitys/appointement_entity.dart';
 
 abstract class AppointmentRepository {
-  Future<Either<Failure, List<AppointmentEntity>>>
-      fetchAppointementsForDoctor();
+  Future<Either<Failure, List<AppointmentEntity>>> fetchAppointementsForDoctor(
+      String patientId);
   Future<Either<Failure, List<AppointmentEntity>>>
       fetchAppointementByPatientId();
 
-  Future<Either<Failure, void>> deleteAppointement(String appointementId);
-  Future<Either<Failure, void>> createAppointement(
+  Future<Either<Failure, List<AppointmentEntity>>> deleteAppointement(
+      String appointementId);
+  Future<Either<Failure, List<AppointmentEntity>>> createAppointement(
       CreateAppointmentParams appointement);
-  Future<Either<Failure, void>> updateAppointement(
+  Future<Either<Failure, List<AppointmentEntity>>> updateAppointement(
       UpdateAppointmentParams appointement);
 }

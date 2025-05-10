@@ -5,7 +5,7 @@ class GetDoctorAppointementsUsecase {
 
   GetDoctorAppointementsUsecase(this._appointmentRepository);
 
-  Future<void> call() async {
-    await _appointmentRepository.fetchAppointementsForDoctor();
+  Future<void> call(String patientId) async {
+    await _appointmentRepository.fetchAppointementsForDoctor(patientId);
   }
 }

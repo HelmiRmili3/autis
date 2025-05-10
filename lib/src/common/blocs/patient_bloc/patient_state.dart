@@ -14,6 +14,12 @@ class PatientsLoaded extends PatientState {
 
 class PatientDeleted extends PatientState {}
 
+class PatientLoaded extends PatientState {
+  final PatientEntity patient;
+
+  PatientLoaded(this.patient);
+}
+
 class VediosLoaded extends PatientState {
   final List<Video> vedios;
   VediosLoaded(this.vedios);

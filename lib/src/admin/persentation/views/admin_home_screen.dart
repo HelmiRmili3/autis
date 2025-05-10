@@ -8,6 +8,9 @@ import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/routes/route_names.dart';
+import '../../../../core/services/navigation_service.dart';
+import '../../../../injection_container.dart';
 import '../../../doctor/persentation/widgets/floating_bottom_bar.dart';
 
 class AdminHomeScreen extends StatefulWidget {
@@ -51,6 +54,9 @@ class _DoctorHomeScreenState extends State<AdminHomeScreen> {
             appBar: CustomGlassAppBar(
               title: state.user.firstname,
               avatarUrl: state.user.avatarUrl,
+              onClick: () {
+                sl<NavigationService>().pushNamed(RoutesNames.adminProfile);
+              },
             ),
             body: Stack(
               children: [

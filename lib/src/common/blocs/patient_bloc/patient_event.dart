@@ -46,3 +46,5 @@ class GetAllVedios extends PatientEvent {
 
   GetAllVedios(this.patientId);
 }
+
+class GetPatient extends PatientEvent {}

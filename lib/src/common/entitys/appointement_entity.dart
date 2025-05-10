@@ -8,6 +8,7 @@ class AppointmentEntity {
   final DoctorEntity doctor;
   final PatientEntity patient;
   final DateTime appointmentDate;
+  final String status;
   final String? location;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -19,6 +20,7 @@ class AppointmentEntity {
     required this.doctor,
     required this.patient,
     required this.appointmentDate,
+    required this.status,
     this.location,
     required this.createdAt,
     required this.updatedAt,
@@ -32,6 +34,7 @@ class AppointmentEntity {
       doctor: DoctorEntity.fromJson(json['doctor'] as Map<String, dynamic>),
       patient: PatientEntity.fromJson(json['patient'] as Map<String, dynamic>),
       appointmentDate: DateTime.parse(json['appointmentDate'] as String),
+      status: json['status'] as String,
       location: json['location'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),

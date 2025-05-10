@@ -3,6 +3,7 @@ import 'package:autis/core/types/either.dart';
 import 'package:autis/src/common/repository/doctor_repository.dart';
 
 import '../../doctor/domain/entities/doctor_entity.dart';
+import '../../doctor/domain/entities/update_doctor_params.dart';
 import '../data/doctor_remote_data_sources.dart';
 
 class DoctorRepositoryImpl implements DoctorRepository {
@@ -29,7 +30,8 @@ class DoctorRepositoryImpl implements DoctorRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateDoctor(DoctorEntity doctor) {
+  Future<Either<Failure, DoctorEntity>> updateDoctor(
+      UpdateDoctorParams doctor) {
     return remoteDataSource.updateDoctor(doctor);
   }
 

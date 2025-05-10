@@ -6,6 +6,9 @@ import 'package:autis/src/doctor/persentation/widgets/gass_app_bar.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/routes/route_names.dart';
+import '../../../../core/services/navigation_service.dart';
+import '../../../../injection_container.dart';
 import '../widgets/floating_bottom_bar.dart';
 import '../widgets/patient_invite_list.dart';
 import '../widgets/patient_list.dart';
@@ -54,6 +57,9 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
             appBar: CustomGlassAppBar(
               title: state.user.firstname,
               avatarUrl: state.user.avatarUrl,
+              onClick: () {
+                sl<NavigationService>().pushNamed(RoutesNames.doctorProfile);
+              },
             ),
             body: Stack(
               children: [

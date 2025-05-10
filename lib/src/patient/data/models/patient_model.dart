@@ -50,7 +50,7 @@ class PatientModel extends UserModel {
       ),
       createdAt: DateTime.parse(createdAt),
       updatedAt: DateTime.parse(updatedAt),
-      dateOfBirth: dateOfBirth,
+      dateOfBirth: dateOfBirth!,
     );
   }
 }

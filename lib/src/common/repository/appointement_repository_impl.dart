@@ -13,13 +13,14 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
     this.remoteDataSource,
   );
   @override
-  Future<Either<Failure, void>> createAppointement(
+  Future<Either<Failure, List<AppointmentEntity>>> createAppointement(
       CreateAppointmentParams appointment) {
     return remoteDataSource.createAppointment(appointment);
   }
 
   @override
-  Future<Either<Failure, void>> deleteAppointement(String appointementId) {
+  Future<Either<Failure, List<AppointmentEntity>>> deleteAppointement(
+      String appointementId) {
     return remoteDataSource.delete(appointementId);
   }
 
@@ -30,13 +31,13 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   }
 
   @override
-  Future<Either<Failure, List<AppointmentEntity>>>
-      fetchAppointementsForDoctor() {
-    return remoteDataSource.getAppointmentsByDoctor();
+  Future<Either<Failure, List<AppointmentEntity>>> fetchAppointementsForDoctor(
+      String patientId) {
+    return remoteDataSource.getAppointmentsByDoctor(patientId);
   }
 
   @override
-  Future<Either<Failure, void>> updateAppointement(
+  Future<Either<Failure, List<AppointmentEntity>>> updateAppointement(
       UpdateAppointmentParams appointement) {
     return remoteDataSource.update(appointement);
   }

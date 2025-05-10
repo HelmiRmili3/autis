@@ -18,9 +18,27 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
     on<GetPatientsByDoctor>(_onGetPatientsByDoctor);
     on<DeletePatient>(_onDeletePatient);
     on<UpdatePatient>(_onUpdatePatient);
+    on<GetPatient>(_onGetPatient);
     on<UploadVedio>(_onUploadVedio);
     on<DeleteVedio>(_onDeleteVedio);
     on<GetAllVedios>(_onGetAllVedios);
+  }
+
+  void _onGetPatient(GetPatient event, Emitter<PatientState> emit) async {
+    emit(PatientLoading());
+    try {
+      final response = await _patientRepository.getPatient();
+      response.fold(
+        (failure) {
+          emit(PatientFailure(failure.message));
+        },
+        (patient) {
+          emit(PatientLoaded(patient));
+        },
+      );
+    } catch (e) {
+      emit(PatientFailure(e.toString()));
+    }
   }
 
   void _onGetPatients(GetPatients event, Emitter<PatientState> emit) async {

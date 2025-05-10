@@ -5,13 +5,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../core/errors/failures.dart';
+import '../../../core/services/secure_storage_service.dart';
 import '../../../core/types/either.dart';
 import '../../../core/utils/collections.dart';
 import '../../../core/utils/enums/role_enum.dart';
+import '../../../injection_container.dart';
 import '../../patient/domain/entities/patient_entity.dart';
+import '../entitys/user_entity.dart';
 import '../entitys/video.dart';
 
 abstract class PatientRemoteDataSource {
+  Future<Either<Failure, PatientEntity>> getPatient();
+
   Future<Either<Failure, List<PatientEntity>>> getPatients();
   Future<Either<Failure, List<PatientEntity>>> getPatientsByDoctor(String id);
   Future<Either<Failure, void>> update(UpdatePatientParams patient);
@@ -97,7 +102,7 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
           .delete();
       final snapshot = await firebaseFirestore
           .collection(Collection.users)
-          .where("role", isEqualTo: Role.patient.name)
+          .where("role", isNotEqualTo: Role.admin.name)
           .get();
 
       final patients = snapshot.docs.map((doc) {
@@ -123,8 +128,10 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
           .doc(vedio.id)
           .set(vedio.toJson());
       // fetch vedios
-      final snapshot =
-          await firebaseFirestore.collection(Collection.videos).get();
+      final snapshot = await firebaseFirestore
+          .collection(Collection.videos)
+          .where('patientId', isEqualTo: vedio.patientId)
+          .get();
       final vedios = snapshot.docs.map((doc) {
         return Video.fromJson(doc.data());
       }).toList();
@@ -142,10 +149,17 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
   Future<Either<Failure, List<Video>>> deleteVediosByPatient(String id) async {
     try {
       // delete Vedio
+      final doc =
+          await firebaseFirestore.collection(Collection.videos).doc(id).get();
+
       await firebaseFirestore.collection(Collection.videos).doc(id).delete();
       // fetch vedios
-      final snapshot =
-          await firebaseFirestore.collection(Collection.videos).get();
+      final vedio = Video.fromJson(doc.data()!);
+
+      final snapshot = await firebaseFirestore
+          .collection(Collection.videos)
+          .where('patientId', isEqualTo: vedio.patientId)
+          .get();
       final vedios = snapshot.docs.map((doc) {
         return Video.fromJson(doc.data());
       }).toList();
@@ -176,6 +190,39 @@ class PatientRemoteDataSourceImpl implements PatientRemoteDataSource {
       return Left(
         FirestoreFailure('Failed to fetch patients : $e'),
       );
+    }
+  }
+
+  @override
+  Future<Either<Failure, PatientEntity>> getPatient() async {
+    try {
+      final currentUser = firebaseAuth.currentUser;
+      if (currentUser == null) {
+        return const Left(FirebaseAuthFailure("No authenticated user"));
+      }
+      final snapshot = await firebaseFirestore
+          .collection(Collection.users)
+          .doc(currentUser.uid)
+          .get();
+
+      final data = snapshot.data();
+      final patient = PatientEntity.fromJson(data!);
+      sl<UserProfileStorage>().saveUserProfile(UserEntity(
+        uid: patient.uid,
+        email: patient.email,
+        firstname: patient.firstname,
+        lastname: patient.lastname,
+        avatarUrl: patient.avatarUrl,
+        dateOfBirth: patient.dateOfBirth,
+        gender: patient.gender,
+        phone: patient.phone,
+        role: patient.role,
+        createdAt: patient.createdAt,
+        updatedAt: patient.updatedAt,
+      ));
+      return Right(patient);
+    } catch (e) {
+      return const Left(FirebaseAuthFailure("No authenticated user"));
     }
   }
 }

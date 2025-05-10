@@ -4,9 +4,11 @@ import 'package:autis/src/common/repository/appointement_repository.dart';
 import 'package:bloc/bloc.dart';
 
 class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
-  final AppointmentRepository _appointmentRepository;
+  final AppointmentRepository appointmentRepository;
 
-  AppointmentBloc(this._appointmentRepository) : super(AppointmentInitial()) {
+  AppointmentBloc(
+    this.appointmentRepository,
+  ) : super(AppointmentInitial()) {
     on<CreatedAppointement>(_onAppointementCreated);
     on<UpdatedAppointement>(_onAppointementUpdated);
     on<DeletedAppointement>(_onAppointementDeleted);
@@ -19,11 +21,11 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     emit(AppointmentLoading());
     try {
       final response =
-          await _appointmentRepository.createAppointement(event.appointement);
+          await appointmentRepository.createAppointement(event.appointement);
       response.fold(
         (failure) => emit(AppointmentFailure(
             "Failed to create appointment: ${failure.message}")),
-        (_) => add(GetPatientAppointements()), // Refresh list after creation
+        (appointments) => emit(AppointmentLoaded(appointments)),
       );
     } catch (e) {
       emit(AppointmentFailure(
@@ -36,11 +38,11 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     emit(AppointmentLoading());
     try {
       final response =
-          await _appointmentRepository.updateAppointement(event.appointement);
+          await appointmentRepository.updateAppointement(event.appointement);
       response.fold(
         (failure) => emit(AppointmentFailure(
             "Failed to update appointment: ${failure.message}")),
-        (_) => add(GetPatientAppointements()), // Refresh list after update
+        (appointments) => emit(AppointmentLoaded(appointments)),
       );
     } catch (e) {
       emit(AppointmentFailure(
@@ -53,11 +55,12 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     emit(AppointmentLoading());
     try {
       final response =
-          await _appointmentRepository.deleteAppointement(event.appointementId);
+          await appointmentRepository.deleteAppointement(event.appointementId);
       response.fold(
         (failure) => emit(AppointmentFailure(
-            "Failed to delete appointment: ${failure.message}")),
-        (_) => add(GetPatientAppointements()), // Refresh list after deletion
+          "Failed to delete appointment: ${failure.message}",
+        )),
+        (appointments) => emit(AppointmentLoaded(appointments)),
       );
     } catch (e) {
       emit(AppointmentFailure(
@@ -69,29 +72,40 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
       GetDoctorAppointements event, Emitter<AppointmentState> emit) async {
     emit(AppointmentLoading());
     try {
-      final response =
-          await _appointmentRepository.fetchAppointementsForDoctor();
+      final response = await appointmentRepository
+          .fetchAppointementsForDoctor(event.patientId);
       response.fold(
-        (failure) => emit(AppointmentFailure(
-            "Failed to load doctor appointments: ${failure.message}")),
+        (failure) => emit(
+          AppointmentFailure(
+            "Failed to load doctor appointments: ${failure.message}",
+          ),
+        ),
         (appointments) => emit(AppointmentLoaded(appointments)),
       );
     } catch (e) {
-      emit(AppointmentFailure(
-          "Unexpected error loading doctor appointments: ${e.toString()}"));
+      emit(
+        AppointmentFailure(
+          "Unexpected error loading doctor appointments: ${e.toString()}",
+        ),
+      );
     }
   }
 
   Future<void> _onGetPatientAppointements(
       GetPatientAppointements event, Emitter<AppointmentState> emit) async {
     emit(AppointmentLoading());
+
     try {
       final response =
-          await _appointmentRepository.fetchAppointementByPatientId();
+          await appointmentRepository.fetchAppointementByPatientId();
       response.fold(
-        (failure) => emit(AppointmentFailure(
-            "Failed to load patient appointments: ${failure.message}")),
-        (appointments) => emit(AppointmentLoaded(appointments)),
+        (failure) {
+          emit(AppointmentFailure(
+              "Failed to load patient appointments: ${failure.message}"));
+        },
+        (appointments) {
+          emit(AppointmentLoaded(appointments));
+        },
       );
     } catch (e) {
       emit(AppointmentFailure(

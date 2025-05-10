@@ -39,7 +39,10 @@ class _DoctorGameScreenState extends State<DoctorGameScreen> {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
-      appBar: const CustomAppBar(title: Strings.games),
+      appBar: const CustomAppBar(
+        title: Strings.games,
+        active: false,
+      ),
       body: BlocBuilder<GameBloc, GameState>(
         builder: (context, state) {
           return HomeBg(

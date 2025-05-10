@@ -57,6 +57,7 @@ class _DoctorVideosScreenState extends State<PatientVideosScreen> {
                   firstname: user.firstname,
                   lastname: user.lastname,
                   avatarUrl: user.avatarUrl,
+                  dateOfBirth: user.dateOfBirth,
                   gender: user.gender,
                   createdAt: user.createdAt,
                   updatedAt: user.updatedAt,
@@ -149,7 +150,10 @@ class _DoctorVideosScreenState extends State<PatientVideosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: Strings.educationalvideos),
+      appBar: const CustomAppBar(
+        title: Strings.educationalvideos,
+        active: false,
+      ),
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),

@@ -27,6 +27,8 @@ class _LevelQuestionsScreenState extends State<LevelQuestionsScreen> {
   int _currentQuestionIndex = 0;
   late List<QuestionEntity> _questions;
   late List<int?> _userAnswers;
+  bool _showFeedback = false;
+  bool _isCorrect = false;
 
   @override
   void initState() {
@@ -37,9 +39,20 @@ class _LevelQuestionsScreenState extends State<LevelQuestionsScreen> {
 
   void _selectAnswer(int userAnswer) {
     final questionIndex = _currentQuestionIndex;
+    final currentQuestion = _questions[questionIndex];
+    final isCorrect = userAnswer == currentQuestion.answerIndex;
 
     setState(() {
       _userAnswers[questionIndex] = userAnswer;
+      _showFeedback = true;
+      _isCorrect = isCorrect;
+    });
+
+    // Show feedback for 2 seconds
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        _showFeedback = false;
+      });
     });
 
     // Update game in Firestore
@@ -53,7 +66,7 @@ class _LevelQuestionsScreenState extends State<LevelQuestionsScreen> {
       ),
     );
 
-    Future.delayed(const Duration(milliseconds: 400), () {
+    Future.delayed(const Duration(milliseconds: 2400), () {
       if (_currentQuestionIndex < _questions.length - 1) {
         setState(() => _currentQuestionIndex++);
       } else {
@@ -103,66 +116,98 @@ class _LevelQuestionsScreenState extends State<LevelQuestionsScreen> {
     final currentQuestion = _questions[_currentQuestionIndex];
     final isAnswered = _userAnswers[_currentQuestionIndex] != null;
 
-    return ContainerScreen(
-      title: '${Strings.level} ${widget.level.id}',
-      imagePath: 'assets/images/homebg.png',
-      leadingicon: Icons.arrow_back_ios_new_rounded,
-      onLeadingPress: () => sl<NavigationService>().goBack(),
+    return Stack(
       children: [
-        const SizedBox(height: 20),
-        Text(
-          "Question ${_currentQuestionIndex + 1} of ${_questions.length}",
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Image.network(
-          currentQuestion.imageUrl,
-          height: 200.h,
-          width: double.infinity,
-          fit: BoxFit.contain,
-        ),
-        const SizedBox(height: 20),
-        ...List.generate(currentQuestion.options.length, (index) {
-          final optionText = currentQuestion.options[index];
-          final isSelected = _userAnswers[_currentQuestionIndex] == index;
-          final isCorrect = currentQuestion.answerIndex == index;
-
-          return GestureDetector(
-            onTap: isAnswered ? null : () => _selectAnswer(index),
-            child: Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isAnswered
-                    ? isCorrect
-                        ? Colors.green
-                        : isSelected
-                            ? Colors.red
-                            : Colors.white
-                    : isSelected
-                        ? Colors.blueAccent
-                        : Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+        ContainerScreen(
+          title: '${Strings.level} ${widget.level.id}',
+          imagePath: 'assets/images/homebg.png',
+          leadingicon: Icons.arrow_back_ios_new_rounded,
+          onLeadingPress: () => sl<NavigationService>().goBack(),
+          children: [
+            const SizedBox(height: 20),
+            Text(
+              "Question ${_currentQuestionIndex + 1} of ${_questions.length}",
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              child: Text(
-                optionText,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: isSelected || (isAnswered && isCorrect)
-                      ? Colors.white
-                      : Colors.black,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              currentQuestion.question,
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Image.network(
+              currentQuestion.imageUrl,
+              height: 200.h,
+              width: double.infinity,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 20),
+            ...List.generate(currentQuestion.options.length, (index) {
+              final optionText = currentQuestion.options[index];
+              final isSelected = _userAnswers[_currentQuestionIndex] == index;
+              final isCorrect = currentQuestion.answerIndex == index;
+
+              return GestureDetector(
+                onTap: isAnswered ? null : () => _selectAnswer(index),
+                child: Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isAnswered
+                        ? isCorrect
+                            ? Colors.green
+                            : isSelected
+                                ? Colors.red
+                                : Colors.white
+                        : isSelected
+                            ? Colors.blueAccent
+                            : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Text(
+                    optionText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSelected || (isAnswered && isCorrect)
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                  ),
+                ),
+              );
+            }),
+            const SizedBox(height: 20),
+          ],
+        ),
+        if (_showFeedback)
+          Center(
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 20.0.h, vertical: 20.0.w),
+                color: Colors.transparent,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50.sp),
+                  child: Image.asset(
+                    _isCorrect
+                        ? 'assets/images/image1.jpeg'
+                        : 'assets/images/image2.jpeg',
+                  ),
                 ),
               ),
             ),
-          );
-        }),
-        const SizedBox(height: 20),
+          ),
       ],
     );
   }

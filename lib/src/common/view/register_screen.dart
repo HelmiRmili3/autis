@@ -9,6 +9,7 @@ import '../../../core/routes/route_names.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/utils/enums/gender_enum.dart';
 import '../../../core/utils/enums/role_enum.dart';
+import '../../../core/utils/strings.dart';
 import '../blocs/auth_bloc/auth_bloc.dart';
 import '../blocs/auth_bloc/auth_event.dart';
 import '../blocs/auth_bloc/auth_state.dart';
@@ -29,20 +30,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final Color primaryColor = const Color(0xFF0076BE);
   final Color accentColor = const Color(0xFF00F1F8);
 
-  // Form controllers
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _specializationController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  DateTime? _selectedDate;
 
   @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
+    _specializationController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   @override
@@ -50,7 +69,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is RegisterSuccess) {
-          // Navigate to home or login screen after successful registration
           sl<NavigationService>().goToNamed(RoutesNames.login);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Registration successful!')),
@@ -68,10 +86,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: ContainerAuth(
         children: [
           Container(
-            height: 600.h,
+            height: 680.h,
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.only(
-              top: 100.h,
+              top: 60.h,
               left: 20.w,
               right: 20.w,
             ),
@@ -97,9 +115,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 5.h),
                     SizedBox(
-                      height: 80.h,
+                      height: 50.h,
                       child: Row(
                         children: [
                           Expanded(
@@ -145,7 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 5.h),
                     TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(
@@ -166,7 +184,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 5.h),
+                    TextFormField(
+                      controller: _phoneController,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(25),
+                          ),
+                        ),
+                      ),
+                      keyboardType: TextInputType.phone,
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 5.h),
+                    // Date time field in here
+                    TextFormField(
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: 'Date of Birth',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.r),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () => _selectDate(context),
+                        ),
+                      ),
+                      controller: TextEditingController(
+                        text: _selectedDate != null
+                            ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                            : '',
+                      ),
+                      validator: (value) {
+                        if (_selectedDate == null) {
+                          return 'Please select your date of birth';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 5.h),
                     DropdownButtonFormField<Gender>(
                       value: _selectedGender,
                       decoration: InputDecoration(
@@ -198,7 +258,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: (value) =>
                           value == null ? 'Please select your gender' : null,
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 5.h),
                     DropdownButtonFormField<Role>(
                       value: _selectedRole,
                       decoration: InputDecoration(
@@ -231,7 +291,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: (value) =>
                           value == null ? 'Please select your role' : null,
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 5.h),
+                    // If the selected role is doctor add specalizaztion TextFormFiled in here
+                    if (_selectedRole == Role.doctor)
+                      Column(
+                        children: [
+                          SizedBox(height: 5.h),
+                          TextFormField(
+                            controller: _specializationController,
+                            decoration: InputDecoration(
+                              labelText: 'Specialization',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25.r),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (_selectedRole == Role.doctor &&
+                                  (value == null || value.isEmpty)) {
+                                return 'Please enter your specialization';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    SizedBox(height: 5.h),
                     CustomPasswordField(
                       controller: _passwordController,
                       labelText: 'Password',
@@ -244,7 +328,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 5.h),
                     BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         if (state is AuthLoading) {
@@ -252,7 +336,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               child: CircularProgressIndicator());
                         }
                         return CustomButton(
-                          title: 'Register',
+                          title: Strings.register,
                           icon: Icons.person,
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
@@ -261,10 +345,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 firstName: _firstNameController.text,
                                 lastName: _lastNameController.text,
                                 email: _emailController.text,
-                                phone: "24355565",
+                                phone: _phoneController.text,
                                 password: _passwordController.text,
                                 gender: _selectedGender!,
                                 role: _selectedRole!,
+                                dateOfBirth: _selectedDate,
+                                specialization: _selectedRole == Role.doctor
+                                    ? _specializationController.text
+                                    : null,
                               );
 
                               context
@@ -309,7 +397,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           Positioned(
-            top: 80.h,
+            top: 40.h,
             left: 60.w,
             right: 60.w,
             child: Container(
