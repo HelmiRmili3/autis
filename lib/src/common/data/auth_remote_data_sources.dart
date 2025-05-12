@@ -93,7 +93,7 @@ class AuthRemoteDataSourcesImpl implements AuthRemoteDataSource {
           dateOfBirth: user.dateOfBirth!,
           phone: user.phone,
           licenseNumber: "licenseNumber",
-          specialization: user.specialization,
+          specialization: user.specialization!,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );

@@ -59,7 +59,7 @@ class DoctorModel extends UserModel {
       createdAt: DateTime.parse(createdAt),
       updatedAt: DateTime.parse(updatedAt),
       licenseNumber: licenseNumber,
-      specialization: specialization,
+      specialization: specialization!,
     );
   }
 }

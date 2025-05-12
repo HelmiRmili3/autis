@@ -6,7 +6,7 @@ import '../../../common/entitys/user_entity.dart';
 class DoctorEntity extends UserEntity {
   final String licenseNumber;
   final bool isVerified;
-  final String? specialization;
+  final String specialization;
 
   const DoctorEntity({
     required super.uid,
@@ -20,7 +20,7 @@ class DoctorEntity extends UserEntity {
     required super.createdAt,
     required super.updatedAt,
     required this.licenseNumber,
-    this.specialization,
+    required this.specialization,
     this.isVerified = false,
   }) : super(role: Role.doctor);
 

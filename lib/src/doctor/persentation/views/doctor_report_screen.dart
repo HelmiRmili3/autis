@@ -43,18 +43,18 @@ class _DoctorReportScreenState extends State<DoctorReportScreen> {
     if (user != null) {
       setState(() {
         currentDoctor = DoctorEntity(
-          uid: user.uid,
-          email: user.email,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          avatarUrl: user.avatarUrl,
-          dateOfBirth: user.dateOfBirth,
-          gender: user.gender,
-          phone: user.phone ?? '',
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-          licenseNumber: "KJZSEJK12",
-        );
+            uid: user.uid,
+            email: user.email,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            avatarUrl: user.avatarUrl,
+            dateOfBirth: user.dateOfBirth,
+            gender: user.gender,
+            phone: user.phone ?? '',
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            licenseNumber: "KJZSEJK12",
+            specialization: "");
       });
     }
   }

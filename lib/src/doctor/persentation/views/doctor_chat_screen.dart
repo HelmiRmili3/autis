@@ -61,6 +61,7 @@ class _DoctorChatScreenState extends State<DoctorChatScreen> {
                 gender: user.gender,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
+                specialization: "",
                 phone: user.phone,
                 licenseNumber: '',
               )
